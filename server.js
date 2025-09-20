@@ -10,7 +10,6 @@ const UPLOAD_DIR = path.join(__dirname, 'uploads');
 const METADATA_FILE = path.join(__dirname, 'metadata.json');
 const PORT = process.env.PORT || 3000;
 const FILE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
-const MAX_DOWNLOADS = 5;
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
 
@@ -55,9 +54,7 @@ app.post('/upload', upload.single('file'), (req, res) => {
     mimeType,
     size,
     createdAt: Date.now(),
-    expiresAt: Date.now() + FILE_TTL_MS,
-    downloads: 0,
-    maxDownloads: MAX_DOWNLOADS
+    expiresAt: Date.now() + FILE_TTL_MS
   };
   saveMetadata();
 
@@ -108,10 +105,6 @@ app.get('/download/:id', (req, res) => {
     return res.status(410).send('Ficheiro expirado');
   }
 
-  entry.downloads++;
-  const deleteAfterServe = entry.maxDownloads && entry.downloads >= entry.maxDownloads;
-  saveMetadata();
-
   const mimeType = entry.mimeType || mime.getType(filePath) || 'application/octet-stream';
   const inlineTypes = ['video/', 'audio/', 'image/'];
   if (inlineTypes.some(t => mimeType.startsWith(t))) {
@@ -119,14 +112,6 @@ app.get('/download/:id', (req, res) => {
   } else {
     res.setHeader('Content-Disposition', `attachment; filename="${entry.originalName}"`);
     streamFile(req, res, filePath, mimeType);
-  }
-
-  if (deleteAfterServe) {
-    setTimeout(() => {
-      try { fs.unlinkSync(filePath); } catch (e) {}
-      delete metadata[id];
-      saveMetadata();
-    }, 5000);
   }
 });
 
