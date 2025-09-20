@@ -62,10 +62,14 @@ app.post('/upload', upload.single('file'), (req, res) => {
   res.json({ id, link });
 });
 
-function streamFile(req, res, filePath, mimeType) {
+function streamFile(req, res, filePath, mimeType, originalName) {
   const stat = fs.statSync(filePath);
   const total = stat.size;
   const range = req.headers.range;
+
+  // Força download automático
+  res.setHeader('Content-Disposition', `attachment; filename="${originalName}"`);
+
   if (range) {
     const parts = range.replace(/bytes=/, '').split('-');
     const start = parseInt(parts[0], 10);
@@ -106,15 +110,10 @@ app.get('/download/:id', (req, res) => {
   }
 
   const mimeType = entry.mimeType || mime.getType(filePath) || 'application/octet-stream';
-  const inlineTypes = ['video/', 'audio/', 'image/'];
-  if (inlineTypes.some(t => mimeType.startsWith(t))) {
-    streamFile(req, res, filePath, mimeType);
-  } else {
-    res.setHeader('Content-Disposition', `attachment; filename="${entry.originalName}"`);
-    streamFile(req, res, filePath, mimeType);
-  }
+  streamFile(req, res, filePath, mimeType, entry.originalName);
 });
 
+// Limpeza periódica de ficheiros expirados
 setInterval(() => {
   const now = Date.now();
   let changed = false;
