@@ -1,0 +1,13 @@
+:root{ --bg:#0b0f12; --card:#0f1720; --accent:#8ab4ff; --text:#e6eef8; --muted:#9aa6b2; }
+*{box-sizing:border-box}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#071019 0%,var(--bg)100%);color:var(--text);display:flex;align-items:center;justify-content:center;height:100vh}
+.card{width:min(720px,95%);background:var(--card);padding:28px;border-radius:12px;box-shadow:0 8px 30px rgba(0,0,0,0.6)}
+h1{margin:0 0 8px;font-size:20px}
+p{margin:0 0 16px;color:var(--muted)}
+form{display:flex;gap:8px;align-items:center}
+input[type=file]{background:transparent;color:var(--text)}
+button{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 12px;border-radius:8px;color:var(--text);cursor:pointer}
+#result{margin-top:16px;display:flex;gap:8px;align-items:center}
+#linkInput{flex:1;padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#0b1116;color:var(--text)}
+.hidden{display:none}
+.muted{color:var(--muted);margin-top:12px}
