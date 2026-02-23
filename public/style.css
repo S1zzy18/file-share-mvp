@@ -159,3 +159,33 @@ button:hover {
   font-size: 14px;
   text-shadow: 0 0 6px rgba(255,255,255,0.5);
 }
+
+
+#progressContainer {
+  margin-top: 20px;
+  width: 100%;
+}
+
+#progressBar {
+  width: 100%;
+  height: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#progressFill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent2), var(--accent3));
+  transition: width 0.2s ease;
+  box-shadow: 0 0 10px var(--accent2);
+}
+
+#progressPercent {
+  display: block;
+  margin-top: 5px;
+  font-size: 12px;
+  color: var(--muted);
+}
