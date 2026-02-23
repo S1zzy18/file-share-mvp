@@ -11,6 +11,61 @@ const METADATA_FILE = path.join(__dirname, 'metadata.json');
 const PORT = process.env.PORT || 3000;
 const FILE_TTL_MS = 24 * 60 * 60 * 1000; // 24h
 
+
+const progressContainer = document.getElementById('progressContainer');
+const progressFill = document.getElementById('progressFill');
+const progressPercent = document.getElementById('progressPercent');
+
+form.addEventListener('submit', (e) => {
+  e.preventDefault();
+  if (!fileInput.files.length) return;
+
+  const file = fileInput.files[0];
+  const formData = new FormData();
+  formData.append('file', file);
+
+  uploadBtn.disabled = true;
+  message.textContent = 'A preparar upload...';
+  
+  // Mostra a barra e limpa o estado anterior
+  progressContainer.classList.remove('hidden');
+  progressFill.style.width = '0%';
+  progressPercent.textContent = '0%';
+
+  const xhr = new XMLHttpRequest();
+
+  // Ouve o progresso do upload
+  xhr.upload.addEventListener('progress', (e) => {
+    if (e.lengthComputable) {
+      const percent = Math.round((e.loaded / e.total) * 100);
+      progressFill.style.width = percent + '%';
+      progressPercent.textContent = percent + '%';
+      message.textContent = `A carregar: ${percent}%`;
+    }
+  });
+
+  xhr.onload = () => {
+    uploadBtn.disabled = false;
+    if (xhr.status === 200) {
+      const data = JSON.parse(xhr.responseText);
+      linkInput.value = data.link;
+      result.classList.remove('hidden');
+      message.textContent = 'Ficheiro carregado com sucesso!';
+      progressContainer.classList.add('hidden'); // Esconde ao terminar
+    } else {
+      message.textContent = 'Erro no upload: ' + xhr.statusText;
+    }
+  };
+
+  xhr.onerror = () => {
+    uploadBtn.disabled = false;
+    message.textContent = 'Erro na comunicação com o servidor';
+  };
+
+  xhr.open('POST', '/upload');
+  xhr.send(formData);
+});
+
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR);
 
 let metadata = {};
