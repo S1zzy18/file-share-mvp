@@ -33,8 +33,12 @@ const storage = multer.diskStorage({
   }
 });
 
-const upload = multer({ storage });
-const app = express();
+const upload = multer({ 
+  storage: storage,
+  limits: {
+    fileSize: Infinity // Sem limites, como querias
+  }
+});
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
