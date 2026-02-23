@@ -35,10 +35,11 @@ const storage = multer.diskStorage({
 
 const upload = multer({ 
   storage: storage,
-  limits: {
-    fileSize: Infinity // Sem limites, como querias
-  }
+  limits: { fileSize: Infinity } 
 });
+
+// AQUI ESTÁ A CORREÇÃO: Primeiro crias a app, depois usas os middlewares
+const app = express();
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'public')));
